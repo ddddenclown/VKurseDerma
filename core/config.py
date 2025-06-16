@@ -3,11 +3,11 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     PROJECT_NAME: str = "ВКурсеДерьма"
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = "секретик"
+    SECRET_KEY: str = "какой то там"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
 
     POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "die221278"
+    POSTGRES_PASSWORD: str = "пароль"
     POSTGRES_DB: str = "VKurseDerma"
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: str = "5432"
@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         return (
-            "postgresql+asyncpg://postgres:die221278@localhost:5432/mydatabase"
+            "postgresql+asyncpg://postgres:{пароль}@localhost:5432/mydatabase"
         )
 
     class Config:
