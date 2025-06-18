@@ -1,0 +1,65 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from models.friendship import Friendship
+from models.user import User
+
+
+async def send_friend_request(
+        db: AsyncSession,
+        user_id: int,
+        friend_id: int,
+) -> Friendship:
+    existing = await db.execute(
+        select(Friendship).filter(
+            ((Friendship.user_id == user_id) & (Friendship.friend_id == friend_id)) |
+            ((Friendship.user_id == friend_id) & (Friendship.friend_id == user_id))
+        )
+    )
+    if existing.scalars().first():
+        return None
+
+    friendship = Friendship(
+        user_id=user_id,
+        friend_id=friend_id,
+    )
+
+    db.add(friendship)
+    await db.commit()
+    await db.refresh(friendship)
+    return friendship
+
+
+async def update_friendship_status(
+        db: AsyncSession,
+        friendship_id: int,
+        status: str,
+) -> Friendship:
+    result = await db.execute(
+        select(Friendship).filter(
+            Friendship.id == friendship_id,
+        )
+    )
+
+    friendship = result.scalars().first()
+    if not friendship:
+        return None
+
+    friendship.status = status
+    await db.commit()
+    await db.refresh(friendship)
+    return friendship
+
+
+async def get_friendship(
+    db: AsyncSession,
+    user_id: int,
+    friend_id: int
+) -> Friendship:
+    result = await db.execute(
+        select(Friendship).filter(
+            ((Friendship.user_id == user_id) & (Friendship.friend_id == friend_id)) |
+            ((Friendship.user_id == friend_id) & (Friendship.friend_id == user_id))
+        )
+    )
+    return result.scalars().first()

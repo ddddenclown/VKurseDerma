@@ -19,3 +19,30 @@ class User(Base):
         lazy="selectin",
         cascade="all, delete-orphan"
     )
+
+    friendships_initiated = relationship(
+        "Friendship",
+        foreign_keys="Friendship.user_id",
+        back_populates="user",
+        lazy="selectin",
+        cascade="all, delete-orphan"
+    )
+
+    friendships_received = relationship(
+        "Friendship",
+        foreign_keys="Friendship.friend_id",
+        back_populates="friend",
+        lazy="selectin",
+        cascade="all, delete-orphan"
+    )
+
+    @property
+    def friends(self):
+        accepted_initiated =[f.friend for f in self.friendships_initiated if f.status == "accepted"]
+        accepted_received = [f.user for f in self.friendships_received if f.status == "accepted"]
+
+        return list(set(accepted_initiated+ accepted_received))
+
+    @property
+    def pending_requests(self):
+        return [f.user for f in self.friendships_received if f.status == "pending"]
