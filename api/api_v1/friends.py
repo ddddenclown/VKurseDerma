@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import get_async_session
 from core.security import get_current_user
 from models.friendship import Friendship
 from models.user import User
-from crud.friendship import send_friend_request, update_friendship_status, get_friendship
+from crud.friendship import send_friend_request, update_friendship_status, get_friendship, get_user_friends
 from schemas.friendship import FriendshipCreate, FriendshipOut, FriendshipStatusUpdate, UserWithFriends
 
 router = APIRouter(prefix="/friends", tags=["friends"])
@@ -62,9 +62,33 @@ async def update_friendship_status_endpoint(
 
 @router.get("/me", response_model=UserWithFriends)
 async def get_my_friends(
-    current_user: User = Depends(get_current_user),
+        current_user: User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_async_session),
 ):
-    return current_user
+    friends = await get_user_friends(db, current_user.id)
+
+    stmt = (
+        select(User)
+        .join(
+            Friendship,
+            and_(
+                Friendship.user_id == User.id,
+                Friendship.friend_id == current_user.id,
+                Friendship.status == "pending"
+            )
+        )
+    )
+
+    result = await db.execute(stmt)
+    pending_requests = result.scalars().all()
+
+    return UserWithFriends(
+        id=current_user.id,
+        username=current_user.username,
+        email=current_user.email,
+        friends=friends,
+        pending_requests=pending_requests,
+    )
 
 
 @router.get("/status/{friend_id}", response_model=FriendshipOut)

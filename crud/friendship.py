@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 
 from models.friendship import Friendship
 from models.user import User
@@ -52,9 +53,9 @@ async def update_friendship_status(
 
 
 async def get_friendship(
-    db: AsyncSession,
-    user_id: int,
-    friend_id: int
+        db: AsyncSession,
+        user_id: int,
+        friend_id: int
 ) -> Friendship:
     result = await db.execute(
         select(Friendship).filter(
@@ -63,3 +64,18 @@ async def get_friendship(
         )
     )
     return result.scalars().first()
+
+
+async def get_user_friends(db: AsyncSession, user_id: int) -> list[User]:
+    user = await db.get(User, user_id, options=[
+        selectinload(User.friendships_initiated),
+        selectinload(User.friendships_received)
+    ])
+
+    friends = []
+    for friendship in user.friendships_initiated + user.friendships_received:
+        if friendship.status == "accepted":
+            friend = friendship.friend if friendship.user_id == user_id else friendship.user
+            friends.append(friend)
+
+    return friends
