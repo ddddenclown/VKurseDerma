@@ -8,7 +8,7 @@ from core.database import get_async_session
 from core.security import get_current_user
 from crud.profile import get_profile_by_user_id, create_profile, update_profile
 
-router = APIRouter(prefix="/profile", tags=["profile"])
+router = APIRouter(tags=["profile"])
 
 
 @router.post("/", response_model=ProfileOut, status_code=status.HTTP_201_CREATED)

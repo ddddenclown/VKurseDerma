@@ -1,680 +1,381 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VKurseDerma</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .navbar-brand {
-            font-weight: bold;
-            color: #4a76a8;
-        }
-        .container {
-            max-width: 800px;
-        }
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            border: none;
-        }
-        .card-header {
-            background-color: #4a76a8;
-            color: white;
-            border-radius: 12px 12px 0 0 !important;
-            font-weight: 600;
-        }
-        .btn-primary {
-            background-color: #4a76a8;
-            border: none;
-            padding: 10px 20px;
-            font-weight: 600;
-        }
-        .btn-primary:hover {
-            background-color: #3a5f8d;
-        }
-        .btn-outline-primary {
-            color: #4a76a8;
-            border-color: #4a76a8;
-        }
-        .btn-outline-primary:hover {
-            background-color: #4a76a8;
-            color: white;
-        }
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #e0e0e0;
-            margin: 0 auto 20px;
-            display: block;
-        }
-        .form-control:focus {
-            border-color: #4a76a8;
-            box-shadow: 0 0 0 0.25rem rgba(74, 118, 168, 0.25);
-        }
-        .error-message {
-            color: #dc3545;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-        .success-message {
-            color: #198754;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-        .welcome-banner {
-            background: linear-gradient(135deg, #4a76a8, #6a96c8);
-            color: white;
-            padding: 40px 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .section-title {
-            color: #4a76a8;
-            border-bottom: 2px solid #4a76a8;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        .profile-info {
-            margin-bottom: 20px;
-        }
-        .profile-info-label {
-            font-weight: 600;
-            color: #555;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px 0;
-            color: #6c757d;
-            margin-top: 30px;
-            border-top: 1px solid #eaeaea;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>VKurseDerma</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    .tab { display: none; }
+    .active { display: block; }
+    nav { margin: 10px 0; }
+    button { margin: 5px; padding: 8px 12px; }
+    input, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 8px; border-bottom: 1px solid #eee; }
+  </style>
 </head>
 <body>
-    <!-- Навигационная панель -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-users me-2"></i>ВКурсеДерьма
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item" id="login-nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            <i class="fas fa-sign-in-alt me-1"></i>Войти
-                        </a>
-                    </li>
-                    <li class="nav-item" id="register-nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">
-                            <i class="fas fa-user-plus me-1"></i>Регистрация
-                        </a>
-                    </li>
-                    <li class="nav-item d-none" id="profile-nav-item">
-                        <a class="nav-link" href="#profile-section">
-                            <i class="fas fa-user-circle me-1"></i>Профиль
-                        </a>
-                    </li>
-                    <li class="nav-item d-none" id="logout-nav-item">
-                        <a class="nav-link" href="#" id="logout-link">
-                            <i class="fas fa-sign-out-alt me-1"></i>Выйти
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+  <!-- Вкладка авторизации -->
+  <div id="auth-tab" class="tab active">
+    <h2>🔐 Авторизация</h2>
+    <form id="login-form">
+      <input type="text" id="login-username" placeholder="Логин" required>
+      <input type="password" id="login-password" placeholder="Пароль" required>
+      <button type="submit">Войти</button>
+    </form>
+    <button id="show-register">Регистрация</button>
+  </div>
+
+  <!-- Вкладка регистрации -->
+  <div id="register-tab" class="tab">
+    <h2>📝 Регистрация</h2>
+    <form id="register-form">
+      <input type="text" id="reg-username" placeholder="Логин" required>
+      <input type="email" id="reg-email" placeholder="Email" required>
+      <input type="password" id="reg-password" placeholder="Пароль" required>
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+    <button id="show-login">Назад к входу</button>
+  </div>
+
+  <!-- Основное приложение -->
+  <div id="app-tab" class="tab">
+    <button id="logout-btn">Выйти</button>
+    <nav>
+      <button onclick="showAppTab('profile-tab')">👤 Профиль</button>
+      <button onclick="showAppTab('users-tab')">👥 Пользователи</button>
+      <button onclick="showAppTab('friends-tab')">🤝 Друзья</button>
     </nav>
 
-    <!-- Основное содержимое -->
-    <div class="container my-5">
-        <!-- Приветственный баннер -->
-        <div class="welcome-banner">
-            <h1 class="display-4">Добро пожаловать в VKurseDerma!</h1>
-            <p class="lead">Ваша социальная сеть для общения и обмена информацией</p>
-            <p id="user-greeting" class="d-none">Вы вошли как: <span id="username-display"></span></p>
-        </div>
-
-        <!-- Информация о статусе API -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-heartbeat me-2"></i>Статус системы
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="card-title">Состояние API</h5>
-                        <p class="card-text">Проверьте работоспособность серверной части</p>
-                    </div>
-                    <button id="check-health-btn" class="btn btn-outline-primary">
-                        <i class="fas fa-check-circle me-1"></i>Проверить
-                    </button>
-                </div>
-                <div id="health-status" class="mt-3"></div>
-            </div>
-        </div>
-
-        <!-- Секция профиля -->
-        <div id="profile-section" class="d-none">
-            <h2 class="section-title"><i class="fas fa-user me-2"></i>Ваш профиль</h2>
-
-            <!-- Информация профиля -->
-            <div class="card mb-4" id="profile-view-card">
-                <div class="card-header">
-                    <i class="fas fa-id-card me-2"></i>Просмотр профиля
-                </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <img id="profile-avatar" src="https://ui-avatars.com/api/?name=User&background=4a76a8&color=fff&size=128" class="profile-avatar">
-                    </div>
-
-                    <div class="row profile-info">
-                        <div class="col-md-4 profile-info-label">Полное имя:</div>
-                        <div class="col-md-8" id="profile-full-name">Не указано</div>
-                    </div>
-                    <div class="row profile-info">
-                        <div class="col-md-4 profile-info-label">О себе:</div>
-                        <div class="col-md-8" id="profile-bio">Не указано</div>
-                    </div>
-                    <div class="row profile-info">
-                        <div class="col-md-4 profile-info-label">Дата создания:</div>
-                        <div class="col-md-8" id="profile-created-at">-</div>
-                    </div>
-                    <div class="row profile-info">
-                        <div class="col-md-4 profile-info-label">Последнее обновление:</div>
-                        <div class="col-md-8" id="profile-updated-at">-</div>
-                    </div>
-
-                    <button id="edit-profile-btn" class="btn btn-primary mt-3">
-                        <i class="fas fa-edit me-1"></i>Редактировать профиль
-                    </button>
-                </div>
-            </div>
-
-            <!-- Форма редактирования профиля -->
-            <div class="card mb-4 d-none" id="profile-edit-card">
-                <div class="card-header">
-                    <i class="fas fa-edit me-2"></i>Редактирование профиля
-                </div>
-                <div class="card-body">
-                    <form id="profile-form">
-                        <div class="mb-3">
-                            <label for="full-name" class="form-label">Полное имя</label>
-                            <input type="text" class="form-control" id="full-name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="bio" class="form-label">О себе</label>
-                            <textarea class="form-control" id="bio" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="avatar-url" class="form-label">URL аватара</label>
-                            <input type="text" class="form-control" id="avatar-url" placeholder="https://example.com/avatar.jpg">
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <button type="button" id="cancel-edit-btn" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-1"></i>Отмена
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i>Сохранить изменения
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <!-- Вкладка профиля -->
+    <div id="profile-tab" class="app-tab">
+      <h2>Мой профиль</h2>
+      <div id="profile-view"></div>
+      <form id="profile-edit-form" style="display: none;">
+        <input type="text" id="edit-full-name" placeholder="Полное имя">
+        <textarea id="edit-bio" placeholder="О себе"></textarea>
+        <input type="text" id="edit-avatar" placeholder="URL аватара">
+        <button type="submit">Сохранить</button>
+      </form>
+      <button id="edit-profile-btn">Редактировать</button>
     </div>
 
-    <!-- Модальное окно входа -->
-    <div class="modal fade" id="loginModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-sign-in-alt me-2"></i>Вход в систему</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="login-form">
-                        <div class="mb-3">
-                            <label for="login-username" class="form-label">Имя пользователя</label>
-                            <input type="text" class="form-control" id="login-username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="login-password" class="form-label">Пароль</label>
-                            <input type="password" class="form-control" id="login-password" required>
-                        </div>
-                        <div id="login-error" class="error-message mb-3"></div>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-sign-in-alt me-1"></i>Войти
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <!-- Вкладка пользователей -->
+    <div id="users-tab" class="app-tab active">
+      <h2>👥 Все пользователи</h2>
+      <form id="search-form">
+        <input type="text" id="search-input" placeholder="Поиск по логину...">
+        <button type="submit">🔍 Искать</button>
+        <button type="button" id="reset-button">🔄 Сбросить</button>
+      </form>
+      <ul id="users-list"></ul>
     </div>
 
-    <!-- Модальное окно регистрации -->
-    <div class="modal fade" id="registerModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Регистрация</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="register-form">
-                        <div class="mb-3">
-                            <label for="register-username" class="form-label">Имя пользователя</label>
-                            <input type="text" class="form-control" id="register-username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="register-email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-full-name" class="form-label">Полное имя</label>
-                            <input type="text" class="form-control" id="register-full-name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-password" class="form-label">Пароль</label>
-                            <input type="password" class="form-control" id="register-password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-confirm-password" class="form-label">Подтверждение пароля</label>
-                            <input type="password" class="form-control" id="register-confirm-password" required>
-                        </div>
-                        <div id="register-error" class="error-message mb-3"></div>
-                        <div id="register-success" class="success-message mb-3"></div>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-user-plus me-1"></i>Зарегистрироваться
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <!-- Вкладка друзей -->
+    <div id="friends-tab" class="app-tab">
+      <h2>🤝 Мои друзья</h2>
+      <h3>Друзья</h3>
+      <ul id="friends-list"></ul>
+      <h3>Заявки в друзья</h3>
+      <ul id="requests-list"></ul>
     </div>
+  </div>
 
-    <!-- Футер -->
-    <footer class="footer bg-light">
-        <div class="container">
-            <p>&copy; 2023 VKurseDerma. Все права защищены.</p>
-            <p>Версия API: 1.0.0</p>
-        </div>
-    </footer>
+  <script>
+    const API_BASE = "http://localhost:8000/api/v1";
+    let token = localStorage.getItem('token');
+    let currentUser = null;
 
-    <!-- Скрипты -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Базовые настройки
-        const API_BASE_URL = 'http://localhost:8000/api/v1';
-        let currentUser = null;
-        let accessToken = null;
+    // Функции управления вкладками
+    function showTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+    }
 
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Проверка наличия токена в localStorage
-            const storedToken = localStorage.getItem('access_token');
-            if (storedToken) {
-                accessToken = storedToken;
-                fetchCurrentUser();
-            }
+    function showAppTab(tabId) {
+      document.querySelectorAll('.app-tab').forEach(tab => tab.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+    }
 
-            // Обработчики событий
-            document.getElementById('check-health-btn').addEventListener('click', checkHealth);
-            document.getElementById('logout-link').addEventListener('click', logout);
-            document.getElementById('edit-profile-btn').addEventListener('click', showEditProfileForm);
-            document.getElementById('cancel-edit-btn').addEventListener('click', hideEditProfileForm);
+    // Авторизация
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
 
-            // Обработчики форм
-            document.getElementById('login-form').addEventListener('submit', handleLogin);
-            document.getElementById('register-form').addEventListener('submit', handleRegister);
-            document.getElementById('profile-form').addEventListener('submit', handleProfileUpdate);
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
         });
 
-        // Проверка здоровья API
-        async function checkHealth() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/health`);
-                const data = await response.json();
+        if (!response.ok) throw new Error('Ошибка входа');
 
-                const healthStatus = document.getElementById('health-status');
-                if (data.status === 'ok') {
-                    healthStatus.innerHTML = `
-                        <div class="alert alert-success d-flex align-items-center">
-                            <i class="fas fa-check-circle fa-2x me-3"></i>
-                            <div>
-                                <h5 class="mb-0">API работает нормально</h5>
-                                <p class="mb-0">${data.details}</p>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    healthStatus.innerHTML = `
-                        <div class="alert alert-danger d-flex align-items-center">
-                            <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
-                            <div>
-                                <h5 class="mb-0">Проблемы с API</h5>
-                                <p class="mb-0">Статус: ${data.status}</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                document.getElementById('health-status').innerHTML = `
-                    <div class="alert alert-danger">
-                        Ошибка при подключении к API: ${error.message}
-                    </div>
-                `;
-            }
+        const data = await response.json();
+        token = data.access_token;
+        localStorage.setItem('token', token);
+        currentUser = { id: data.user_id, username: data.username };
+
+        showTab('app-tab');
+        showAppTab('users-tab');
+        fetchUsers();
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    // Регистрация
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = {
+        username: document.getElementById('reg-username').value,
+        email: document.getElementById('reg-email').value,
+        password: document.getElementById('reg-password').value
+      };
+
+      try {
+        const response = await fetch(`${API_BASE}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(user)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Ошибка регистрации');
         }
 
-        // Обработка входа
-        async function handleLogin(e) {
-            e.preventDefault();
+        alert('Регистрация успешна! Теперь войдите.');
+        showTab('auth-tab');
+      } catch (error) {
+        alert(error.message);
+      }
+    });
 
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
+    // Загрузка пользователей
+    async function fetchUsers(query = '') {
+      try {
+        const url = query
+          ? `${API_BASE}/users/search?query=${encodeURIComponent(query)}`
+          : `${API_BASE}/users/`;
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        'username': username,
-                        'password': password
-                    })
-                });
+        const response = await fetch(url, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-                const data = await response.json();
+        if (!response.ok) throw new Error('Ошибка загрузки пользователей');
+        const users = await response.json();
 
-                if (response.ok) {
-                    accessToken = data.access_token;
-                    localStorage.setItem('access_token', accessToken);
+        const list = document.getElementById('users-list');
+        list.innerHTML = '';
 
-                    // Закрываем модальное окно
-                    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                    loginModal.hide();
-
-                    // Получаем информацию о пользователе
-                    fetchCurrentUser();
-
-                    // Очищаем форму
-                    document.getElementById('login-form').reset();
-                } else {
-                    document.getElementById('login-error').textContent =
-                        data.detail || 'Ошибка входа. Проверьте имя пользователя и пароль.';
-                }
-            } catch (error) {
-                document.getElementById('login-error').textContent =
-                    'Ошибка сети. Пожалуйста, попробуйте позже.';
-            }
+        if (users.length === 0) {
+          list.innerHTML = '<li>Пользователи не найдены</li>';
+          return;
         }
 
-        // Обработка регистрации
-        async function handleRegister(e) {
-            e.preventDefault();
+        users.forEach(user => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <strong>${user.username}</strong> (${user.email})
+            <button onclick="sendFriendRequest(${user.id})">➕ Добавить в друзья</button>
+          `;
+          list.appendChild(li);
+        });
+      } catch (error) {
+        console.error('Ошибка загрузки пользователей:', error);
+        document.getElementById('users-list').innerHTML = `<li>Ошибка: ${error.message}</li>`;
+      }
+    }
 
-            const username = document.getElementById('register-username').value;
-            const email = document.getElementById('register-email').value;
-            const fullName = document.getElementById('register-full-name').value;
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-confirm-password').value;
+    // Поиск пользователей
+    document.getElementById('search-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const query = document.getElementById('search-input').value;
+      fetchUsers(query);
+    });
 
-            // Простая валидация паролей
-            if (password !== confirmPassword) {
-                document.getElementById('register-error').textContent = 'Пароли не совпадают';
-                return;
-            }
+    // Сброс поиска
+    document.getElementById('reset-button').addEventListener('click', () => {
+      document.getElementById('search-input').value = '';
+      fetchUsers();
+    });
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        email: email,
-                        full_name: fullName,
-                        password: password
-                    })
-                });
+    // Отправка заявки в друзья
+    window.sendFriendRequest = async (friendId) => {
+      try {
+        const response = await fetch(`${API_BASE}/friends/request`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ friend_id: friendId })
+        });
 
-                const data = await response.json();
+        if (!response.ok) throw new Error('Ошибка отправки заявки');
+        alert('Заявка отправлена!');
+        loadFriends();
+      } catch (error) {
+        alert(error.message);
+      }
+    };
 
-                if (response.ok) {
-                    document.getElementById('register-error').textContent = '';
-                    document.getElementById('register-success').textContent =
-                        'Регистрация успешна! Теперь вы можете войти в систему.';
+    // Загрузка профиля
+    async function loadProfile() {
+      try {
+        const response = await fetch(`${API_BASE}/profile/`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-                    // Очищаем форму
-                    document.getElementById('register-form').reset();
+        if (!response.ok) throw new Error('Ошибка загрузки профиля');
+        const profile = await response.json();
 
-                    // Закрываем модальное окно через 2 секунды
-                    setTimeout(() => {
-                        const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
-                        registerModal.hide();
-                        document.getElementById('register-success').textContent = '';
-                    }, 2000);
-                } else {
-                    document.getElementById('register-error').textContent =
-                        data.detail || 'Ошибка регистрации. Пожалуйста, попробуйте снова.';
-                }
-            } catch (error) {
-                document.getElementById('register-error').textContent =
-                    'Ошибка сети. Пожалуйста, попробуйте позже.';
-            }
+        document.getElementById('profile-view').innerHTML = `
+          <p><strong>Имя:</strong> ${profile.full_name || 'Не указано'}</p>
+          <p><strong>О себе:</strong> ${profile.bio || 'Не указано'}</p>
+          ${profile.avatar_url ? `<img src="${profile.avatar_url}" width="100">` : ''}
+        `;
+
+        // Заполнение формы редактирования
+        document.getElementById('edit-full-name').value = profile.full_name || '';
+        document.getElementById('edit-bio').value = profile.bio || '';
+        document.getElementById('edit-avatar').value = profile.avatar_url || '';
+      } catch (error) {
+        console.error('Ошибка загрузки профиля:', error);
+        document.getElementById('profile-view').innerHTML = `<p>Ошибка: ${error.message}</p>`;
+      }
+    }
+
+    // Редактирование профиля
+    document.getElementById('edit-profile-btn').addEventListener('click', () => {
+      document.getElementById('profile-view').style.display = 'none';
+      document.getElementById('profile-edit-form').style.display = 'block';
+    });
+
+    document.getElementById('profile-edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const profileData = {
+        full_name: document.getElementById('edit-full-name').value,
+        bio: document.getElementById('edit-bio').value,
+        avatar_url: document.getElementById('edit-avatar').value
+      };
+
+      try {
+        const response = await fetch(`${API_BASE}/profile/`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(profileData)
+        });
+
+        if (!response.ok) throw new Error('Ошибка сохранения');
+
+        document.getElementById('profile-view').style.display = 'block';
+        document.getElementById('profile-edit-form').style.display = 'none';
+        loadProfile();
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    // Загрузка друзей
+    async function loadFriends() {
+      try {
+        const response = await fetch(`${API_BASE}/friends/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Ошибка загрузки друзей');
+        const data = await response.json();
+
+        // Список друзей
+        const friendsList = document.getElementById('friends-list');
+        friendsList.innerHTML = '';
+
+        if (data.friends.length === 0) {
+          friendsList.innerHTML = '<li>У вас пока нет друзей</li>';
+        } else {
+          data.friends.forEach(friend => {
+            const li = document.createElement('li');
+            li.textContent = friend.username;
+            friendsList.appendChild(li);
+          });
         }
 
-        // Получение информации о текущем пользователе
-        async function fetchCurrentUser() {
-            if (!accessToken) return;
+        // Входящие заявки
+        const requestsList = document.getElementById('requests-list');
+        requestsList.innerHTML = '';
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/me`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-
-                if (response.ok) {
-                    const userData = await response.json();
-                    currentUser = userData;
-                    updateUIAfterLogin();
-
-                    // Получаем профиль пользователя
-                    fetchUserProfile();
-                } else {
-                    logout();
-                }
-            } catch (error) {
-                console.error('Ошибка при получении информации о пользователе:', error);
-            }
+        if (data.pending_requests.length === 0) {
+          requestsList.innerHTML = '<li>Нет входящих заявок</li>';
+        } else {
+          data.pending_requests.forEach(request => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              ${request.username}
+              <button onclick="acceptFriendRequest(${request.id})">✅ Принять</button>
+            `;
+            requestsList.appendChild(li);
+          });
         }
+      } catch (error) {
+        console.error('Ошибка загрузки друзей:', error);
+      }
+    }
 
-        // Получение профиля пользователя
-        async function fetchUserProfile() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/profile/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
+    // Принятие заявки в друзья
+    window.acceptFriendRequest = async (friendId) => {
+      try {
+        // Найдем ID заявки
+        const response = await fetch(`${API_BASE}/friends/status/${friendId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-                if (response.ok) {
-                    const profileData = await response.json();
-                    displayProfile(profileData);
-                } else if (response.status === 404) {
-                    // Профиль не найден - это нормально для нового пользователя
-                    document.getElementById('profile-view-card').innerHTML = `
-                        <div class="card-body text-center">
-                            <p class="lead">Профиль не найден</p>
-                            <p>Создайте свой профиль, чтобы начать использовать все возможности системы.</p>
-                            <button id="create-profile-btn" class="btn btn-primary">
-                                <i class="fas fa-plus me-1"></i>Создать профиль
-                            </button>
-                        </div>
-                    `;
-                    document.getElementById('create-profile-btn').addEventListener('click', showEditProfileForm);
-                }
-            } catch (error) {
-                console.error('Ошибка при получении профиля:', error);
-            }
-        }
+        if (!response.ok) throw new Error('Ошибка поиска заявки');
+        const friendship = await response.json();
 
-        // Обновление UI после входа
-        function updateUIAfterLogin() {
-            // Обновляем навигацию
-            document.getElementById('login-nav-item').classList.add('d-none');
-            document.getElementById('register-nav-item').classList.add('d-none');
-            document.getElementById('profile-nav-item').classList.remove('d-none');
-            document.getElementById('logout-nav-item').classList.remove('d-none');
+        // Примем заявку
+        const updateResponse = await fetch(`${API_BASE}/friends/${friendship.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: 'accepted' })
+        });
 
-            // Показываем секцию профиля
-            document.getElementById('profile-section').classList.remove('d-none');
+        if (!updateResponse.ok) throw new Error('Ошибка принятия заявки');
+        alert('Заявка принята!');
+        loadFriends();
+      } catch (error) {
+        alert(error.message);
+      }
+    };
 
-            // Обновляем приветствие
-            document.getElementById('user-greeting').classList.remove('d-none');
-            document.getElementById('username-display').textContent = currentUser.username;
-        }
+    // Выход
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      token = null;
+      currentUser = null;
+      showTab('auth-tab');
+    });
 
-        // Отображение профиля
-        function displayProfile(profile) {
-            document.getElementById('profile-full-name').textContent = profile.full_name || 'Не указано';
-            document.getElementById('profile-bio').textContent = profile.bio || 'Не указано';
-            document.getElementById('profile-created-at').textContent =
-                profile.created_at ? new Date(profile.created_at).toLocaleString() : '-';
-            document.getElementById('profile-updated-at').textContent =
-                profile.updated_at ? new Date(profile.updated_at).toLocaleString() : '-';
+    // Переключение между вкладками
+    document.getElementById('show-register').addEventListener('click', () => showTab('register-tab'));
+    document.getElementById('show-login').addEventListener('click', () => showTab('auth-tab'));
 
-            // Обновляем аватар
-            if (profile.avatar_url) {
-                document.getElementById('profile-avatar').src = profile.avatar_url;
-            }
-        }
-
-        // Показать форму редактирования профиля
-        function showEditProfileForm() {
-            document.getElementById('profile-view-card').classList.add('d-none');
-            document.getElementById('profile-edit-card').classList.remove('d-none');
-
-            // Если профиль уже существует, заполняем форму данными
-            if (currentUser.profile) {
-                document.getElementById('full-name').value = currentUser.profile.full_name || '';
-                document.getElementById('bio').value = currentUser.profile.bio || '';
-                document.getElementById('avatar-url').value = currentUser.profile.avatar_url || '';
-            }
-        }
-
-        // Скрыть форму редактирования профиля
-        function hideEditProfileForm() {
-            document.getElementById('profile-edit-card').classList.add('d-none');
-            document.getElementById('profile-view-card').classList.remove('d-none');
-        }
-
-        // Обработка обновления профиля
-        async function handleProfileUpdate(e) {
-            e.preventDefault();
-
-            const fullName = document.getElementById('full-name').value;
-            const bio = document.getElementById('bio').value;
-            const avatarUrl = document.getElementById('avatar-url').value;
-
-            const profileData = {
-                full_name: fullName,
-                bio: bio,
-                avatar_url: avatarUrl
-            };
-
-            try {
-                let response;
-                if (currentUser.profile) {
-                    // Обновление существующего профиля
-                    response = await fetch(`${API_BASE_URL}/profile/profile`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(profileData)
-                    });
-                } else {
-                    // Создание нового профиля
-                    response = await fetch(`${API_BASE_URL}/profile/profile`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(profileData)
-                    });
-                }
-
-                if (response.ok) {
-                    const updatedProfile = await response.json();
-                    currentUser.profile = updatedProfile;
-
-                    // Обновляем отображение профиля
-                    displayProfile(updatedProfile);
-
-                    // Скрываем форму редактирования
-                    hideEditProfileForm();
-
-                    // Показываем сообщение об успехе
-                    const alert = document.createElement('div');
-                    alert.className = 'alert alert-success mt-3';
-                    alert.innerHTML = `
-                        <i class="fas fa-check-circle me-2"></i>
-                        Профиль успешно ${currentUser.profile ? 'обновлен' : 'создан'}!
-                    `;
-                    document.getElementById('profile-view-card').appendChild(alert);
-
-                    // Убираем сообщение через 3 секунды
-                    setTimeout(() => {
-                        alert.remove();
-                    }, 3000);
-                } else {
-                    const errorData = await response.json();
-                    alert(`Ошибка: ${errorData.detail || 'Неизвестная ошибка'}`);
-                }
-            } catch (error) {
-                console.error('Ошибка при обновлении профиля:', error);
-                alert('Ошибка сети. Пожалуйста, попробуйте позже.');
-            }
-        }
-
-        // Выход из системы
-        function logout() {
-            // Очищаем данные пользователя
-            currentUser = null;
-            accessToken = null;
-            localStorage.removeItem('access_token');
-
-            // Обновляем навигацию
-            document.getElementById('login-nav-item').classList.remove('d-none');
-            document.getElementById('register-nav-item').classList.remove('d-none');
-            document.getElementById('profile-nav-item').classList.add('d-none');
-            document.getElementById('logout-nav-item').classList.add('d-none');
-
-            // Скрываем секцию профиля
-            document.getElementById('profile-section').classList.add('d-none');
-
-            // Скрываем приветствие
-            document.getElementById('user-greeting').classList.add('d-none');
-        }
-    </script>
+    // Инициализация при загрузке
+    if (token) {
+      showTab('app-tab');
+      showAppTab('users-tab');
+      fetchUsers();
+    } else {
+      showTab('auth-tab');
+    }
+  </script>
 </body>
 </html>

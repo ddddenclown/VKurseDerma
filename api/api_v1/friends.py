@@ -9,7 +9,7 @@ from models.user import User
 from crud.friendship import send_friend_request, update_friendship_status, get_friendship, get_user_friends
 from schemas.friendship import FriendshipCreate, FriendshipOut, FriendshipStatusUpdate, UserWithFriends
 
-router = APIRouter(prefix="/friends", tags=["friends"])
+router = APIRouter(tags=["friends"])
 
 @router.post("/request", response_model=FriendshipOut, status_code=status.HTTP_201_CREATED)
 async def senf_friend_request_endpoint(

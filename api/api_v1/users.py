@@ -6,16 +6,14 @@ from core.database import get_async_session
 from crud.user import get_all_users, search_user_by_username
 from schemas.user import UserWithDetails
 
-router = APIRouter(
-    prefix="/users",
-    tags=["users"]
+router = APIRouter(tags=["users"]
 )
 
 
 @router.get("/", response_model=List[UserWithDetails])
 async def get_all_users_endpoint(
         offset: int = 0,
-        limit: int = 0,
+        limit: int = 100,
         db: AsyncSession = Depends(get_async_session),
 ):
     users = await get_all_users(db, offset=offset, limit=limit)
