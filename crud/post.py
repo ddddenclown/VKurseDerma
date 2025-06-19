@@ -1,6 +1,7 @@
+from sqlalchemy import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import List
+from typing import List, Tuple
 
 from models.post import Post
 
@@ -59,3 +60,16 @@ async def delete_post(
 ) -> None:
     await db.delete(post)
     await db.commit()
+
+
+async def get_all_posts(
+    db: AsyncSession,
+    offset: int = 0,
+    limit: int = 100,
+) -> list[Post]:
+    result = await db.execute(
+        select(Post).
+        offset(offset).
+        limit(limit)
+    )
+    return result.scalars().all()

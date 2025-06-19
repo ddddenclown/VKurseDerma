@@ -5,9 +5,8 @@ from typing import List
 from core.database import get_async_session
 from core.security import get_current_user
 from models.user import User
-from models.post import Post
 from schemas.post import PostCreate, PostUpdate, Post
-from crud.post import create_post, get_user_posts, get_post_by_id, update_post, delete_post
+from crud.post import create_post, get_user_posts, get_post_by_id, update_post, delete_post, get_all_posts
 
 router = APIRouter(tags=["posts"])
 
@@ -27,6 +26,13 @@ async def read_my_posts(
         db: AsyncSession = Depends(get_async_session),
 ):
     return await get_user_posts(db, current_user.id)
+
+
+@router.get("/all", response_model=List[Post])
+async def read_all_posts(
+        db: AsyncSession = Depends(get_async_session)
+):
+    return await get_all_posts(db)
 
 
 @router.get("/{post_id}", response_model=Post)
@@ -85,3 +91,4 @@ async def delete_existing_post(
 
     await delete_post(db, post)
     return None
+
