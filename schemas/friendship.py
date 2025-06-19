@@ -24,7 +24,10 @@ class FriendshipStatusUpdate(BaseModel):
     status: str
 
 
-class UserWithFriends(UserRead):
+class UserWithFriends(BaseModel):
+    id: int
+    username: str
+    email: str
     friends: list[UserRead] = []
     pending_requests: list[UserRead] = []
 

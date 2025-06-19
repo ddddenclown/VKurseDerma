@@ -1,5 +1,6 @@
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import declarative_base, relationship, Mapped
 from sqlalchemy import Column, Integer, String
+from typing import List
 
 Base = declarative_base()
 
@@ -34,6 +35,13 @@ class User(Base):
         back_populates="friend",
         lazy="selectin",
         cascade="all, delete-orphan"
+    )
+
+    posts: Mapped[List["Post"]] = relationship(
+        back_populates="author",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="Post.created_at.desc()"
     )
 
     @property

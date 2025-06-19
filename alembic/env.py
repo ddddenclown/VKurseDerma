@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 # Импортируем модели и настройки
 from models.user import Base
+from models.post import Post
 from models.profiles import Profile
 from models.friendship import Friendship
 from core.config import settings

@@ -58,6 +58,7 @@ async def update_friendship_status_endpoint(
         )
 
     updated_friendship = await update_friendship_status(db, friendship_id, status_update.status)
+    return updated_friendship
 
 
 @router.get("/me", response_model=UserWithFriends)
