@@ -66,16 +66,26 @@ async def get_friendship(
     return result.scalars().first()
 
 
-async def get_user_friends(db: AsyncSession, user_id: int) -> list[User]:
-    user = await db.get(User, user_id, options=[
-        selectinload(User.friendships_initiated),
-        selectinload(User.friendships_received)
-    ])
-
+async def get_user_friends(
+        db: AsyncSession,
+        user_id: int,
+) -> list[User]:
+    result = await db.execute(
+        select(User)
+        .options(
+            selectinload(User.friendships_initiated)
+            .selectinload(Friendship.friend),
+            selectinload(User.friendships_received)
+            .selectinload(Friendship.user)
+        )
+        .where(User.id == user_id)
+    )
+    user = result.scalars().first()
+    if not user:
+        return []
     friends = []
-    for friendship in user.friendships_initiated + user.friendships_received:
-        if friendship.status == "accepted":
-            friend = friendship.friend if friendship.user_id == user_id else friendship.user
+    for f in user.friendships_initiated + user.friendships_received:
+        if f.status == "accepted":
+            friend = f.friend if f.user_id == user_id else f.user
             friends.append(friend)
-
     return friends
