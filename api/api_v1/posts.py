@@ -65,7 +65,7 @@ async def update_existing_post(
     return await update_post(db, post, post_data.model_dump(exclude_unset=True))
 
 
-@router.delete("/{post_ud}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_existing_post(
         post_id: int,
         current_user: User = Depends(get_current_user),
