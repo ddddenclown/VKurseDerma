@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
@@ -6,7 +6,9 @@ from core.database import get_async_session
 from core.security import get_current_user
 from models.user import User
 from schemas.post import PostCreate, PostUpdate, Post
-from crud.post import create_post, get_user_posts, get_post_by_id, update_post, delete_post, get_all_posts
+from crud.post import (create_post, get_user_posts, get_post_by_id,
+                       update_post, delete_post, get_all_posts,
+                       search_post_by_content)
 
 router = APIRouter(tags=["posts"])
 
@@ -92,3 +94,24 @@ async def delete_existing_post(
     await delete_post(db, post)
     return None
 
+
+@router.get("/search/", response_model=List[Post])
+async def search_posts(
+        q: str = Query(..., min_length=2, description="Поисковый запрос (минимум 2 символа)"),
+        db: AsyncSession = Depends(get_async_session),
+        limit: int = 20,
+        offset: int = 0,
+):
+    try:
+        result = await search_post_by_content(
+            db,
+            search_query=q,
+            limit=limit,
+            offset=offset,
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ошибка поиска: {str(e)}"
+        )
