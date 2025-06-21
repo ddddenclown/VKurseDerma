@@ -12,6 +12,7 @@ from models.user import Base
 from models.post import Post
 from models.profiles import Profile
 from models.friendship import Friendship
+from models.chat import Conversation, Participant
 from core.config import settings
 
 # Асинхронная версия

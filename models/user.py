@@ -7,7 +7,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer,primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True,nullable=False)
     full_name = Column(String, nullable=True)
@@ -42,6 +42,13 @@ class User(Base):
         cascade="all, delete-orphan",
         lazy="selectin",
         order_by="Post.created_at.desc()"
+    )
+
+    conversations = relationship(
+        "Participant",
+        back_populates="user",
+        lazy="dynamic",
+        cascade="all, delete-orphan"
     )
 
     @property
