@@ -60,7 +60,7 @@ async def send_new_message(
     return await send_messages(db, current_user.id, message.conversation_id, message.text)
 
 
-@router.get("/conversations/{conversation_id}/messages/", response_model=List[MessageOut])
+@router.get("/conversations/{conversation_id}/messages/") # не забыть поправить response_model
 async def get_conversation_messages(
         conversation_id: int,
         current_user: User = Depends(get_current_user),
@@ -78,7 +78,7 @@ async def get_conversation_messages(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not a conversation participant"
         )
-    return await get_messages(db, conversation_id)
+    return await get_messages(db, conversation_id, current_user.id)
 
 
 class ConnectionManager:

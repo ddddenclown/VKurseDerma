@@ -5,7 +5,7 @@ from core.config import settings
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="APIшка типа соцсети",
+    description="APIшка VKurseDerma",
     version="1.0.0"
 )
 

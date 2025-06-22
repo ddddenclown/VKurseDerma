@@ -1,9 +1,11 @@
-from sqlalchemy import select, and_, func, exists
+from sqlalchemy import select, and_, func, exists, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from models.chat import Conversation, Participant, Message
+from models.user import User
+from schemas.user import MessageOut
 
 
 async def create_conversation(
@@ -65,12 +67,41 @@ async def send_messages(
 async def get_messages(
         db: AsyncSession,
         conversation_id: int,
+        current_user_id: int,
         limit: int = 100
 ):
-    result = await db.execute(
+    await db.execute(
+        update(Message)
+        .where(
+            Message.conversation_id == conversation_id,
+            Message.sender_id != current_user_id,
+            Message.is_read == False
+        )
+        .values(is_read=True)
+    )
+    await db.commit()
+
+    messages = await db.execute(
         select(Message)
+        .options(selectinload(Message.sender))
         .where(Message.conversation_id == conversation_id)
         .order_by(Message.created_at.desc())
         .limit(limit)
     )
-    return result.scalars().all()
+
+    messages = messages.scalars().all()
+
+    return [
+        {
+            "id": m.id,
+            "text": m.text,
+            "sender": {
+                "id": m.sender.id,
+                "full_name": m.sender.full_name,
+                "username": m.sender.username
+            },
+            "created_at": m.created_at,
+            "is_read": m.is_read,
+        }
+        for m in messages
+    ]
