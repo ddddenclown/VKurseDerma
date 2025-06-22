@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 from sqlalchemy import and_
 import json
 
-from schemas.chat import ConversationOut, MessageOut, MessageCreate
+from schemas.chat import ConversationOut, MessageOut, MessageCreate, MessageOut_get
 from models.user import User
 from models.chat import Participant
 from core.security import get_current_user
@@ -29,6 +29,19 @@ async def create_new_conversation(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Need at least 2 users"
+        )
+
+    result = await db.execute(
+        select(User.id)
+        .where(User.id.in_(participants_ids))
+    )
+    existing_ids = set(result.scalars().all())
+
+    missing_ids = set(participants_ids) - existing_ids
+    if missing_ids:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Users with IDs {missing_ids} do not exist"
         )
 
     return await create_conversation(db, participants_ids)
@@ -60,7 +73,7 @@ async def send_new_message(
     return await send_messages(db, current_user.id, message.conversation_id, message.text)
 
 
-@router.get("/conversations/{conversation_id}/messages/") # не забыть поправить response_model
+@router.get("/conversations/{conversation_id}/messages/", response_model=List[MessageOut_get])
 async def get_conversation_messages(
         conversation_id: int,
         current_user: User = Depends(get_current_user),

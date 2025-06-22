@@ -1,29 +1,40 @@
 from sqlalchemy import select, and_, func, exists, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException, status
 from typing import List
 
 from models.chat import Conversation, Participant, Message
 from models.user import User
-from schemas.user import MessageOut
 
 
 async def create_conversation(
-        db: AsyncSession,
-        user_ids: List[int],
+    db: AsyncSession,
+    user_ids: List[int],
 ):
-    unique_user_ids = list(dict.fromkeys(user_ids))
+    unique_user_ids = list(set(user_ids))
+
+    if len(unique_user_ids) != 2:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Chat must have 2 users"
+        )
 
     conv = Conversation()
     db.add(conv)
     await db.flush()
 
-    for user_id in user_ids:
-        participant = Participant(user_id=user_id, conversation_id = conv.id)
+    for user_id in unique_user_ids:
+        participant = Participant(user_id=user_id, conversation_id=conv.id)
         db.add(participant)
 
     await db.commit()
-    return conv
+
+    return {
+        "id": conv.id,
+        "participants": unique_user_ids,
+        "created_at": conv.created_at,
+    }
 
 
 async def get_user_conversations(db: AsyncSession, user_id: int):
@@ -47,12 +58,25 @@ async def get_user_conversations(db: AsyncSession, user_id: int):
     result = await db.execute(stmt)
     return result.mappings().all()
 
+
 async def send_messages(
         db: AsyncSession,
         sender_id: int,
         conversation_id: int,
         text: str
 ):
+    result = await db.execute(
+        select(Conversation)
+        .where(Conversation.id == conversation_id)
+    )
+    conversation = result.scalar_one_or_none()
+    if conversation is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversations not found"
+        )
+
+
     message = Message(
         text=text,
         sender_id=sender_id,

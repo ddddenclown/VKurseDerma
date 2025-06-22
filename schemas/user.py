@@ -37,14 +37,3 @@ class UserShort(BaseModel):
     id: int
     full_name: str
     username: str
-
-
-class MessageOut(BaseModel):
-    id: int
-    text: str
-    sender: UserOut
-    conversation_id: int
-    created_at: datetime
-    is_read: bool
-
-    model_config = ConfigDict(from_attributes=True)
