@@ -14,7 +14,10 @@ from models.profiles import Profile
 from models.friendship import Friendship
 from models.chat import Conversation, Participant
 from core.config import settings
-
+from models.post import Base
+from models.friendship import Base
+from models.profiles import Base
+from models.chat import Base
 # Асинхронная версия
 from sqlalchemy.ext.asyncio import create_async_engine
 

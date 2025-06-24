@@ -1,381 +1,285 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>VKurseDerma</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-    .tab { display: none; }
-    .active { display: block; }
-    nav { margin: 10px 0; }
-    button { margin: 5px; padding: 8px 12px; }
-    input, textarea { width: 100%; padding: 8px; margin: 5px 0; }
-    ul { list-style: none; padding: 0; }
-    li { padding: 8px; border-bottom: 1px solid #eee; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VKurseDerma</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        main {
+            padding: 20px;
+            min-height: 80vh;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-  <!-- Вкладка авторизации -->
-  <div id="auth-tab" class="tab active">
-    <h2>🔐 Авторизация</h2>
-    <form id="login-form">
-      <input type="text" id="login-username" placeholder="Логин" required>
-      <input type="password" id="login-password" placeholder="Пароль" required>
-      <button type="submit">Войти</button>
-    </form>
-    <button id="show-register">Регистрация</button>
-  </div>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#home" onclick="showSection('home')">Главная</a></li>
+                <li><a href="#profile" onclick="showSection('profile')">Профиль</a></li>
+                <li><a href="#friends" onclick="showSection('friends')">Друзья</a></li>
+                <li><a href="#users" onclick="showSection('users')">Пользователи</a></li>
+                <li><a href="#posts" onclick="showSection('posts')">Посты</a></li>
+                <li><a href="#chats" onclick="showSection('chats')">Чаты</a></li>
+                <li><a href="#login" onclick="showSection('login')">Вход</a></li>
+                <li><a href="#register" onclick="showSection('register')">Регистрация</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content">
+        <div id="home" class="content-section active">
+            <h2>Добро пожаловать в VKurseDerma</h2>
+            <p>Это социальная сеть для общения и обмена информацией.</p>
+        </div>
+        <div id="profile" class="content-section">
+            <h2>Профиль</h2>
+            <div id="profile-info"></div>
+            <button class="btn btn-primary" onclick="loadProfile()">Обновить профиль</button>
+        </div>
+        <div id="friends" class="content-section">
+            <h2>Друзья</h2>
+            <div id="friends-list"></div>
+            <button class="btn btn-primary" onclick="loadFriends()">Обновить список друзей</button>
+        </div>
+        <div id="users" class="content-section">
+            <h2>Пользователи</h2>
+            <input type="text" id="user-search" class="form-control" placeholder="Поиск пользователей">
+            <button class="btn btn-primary mt-2" onclick="searchUsers()">Поиск</button>
+            <div id="users-list"></div>
+        </div>
+        <div id="posts" class="content-section">
+            <h2>Посты</h2>
+            <div id="posts-list"></div>
+            <button class="btn btn-primary" onclick="loadPosts()">Обновить посты</button>
+            <div class="mt-3">
+                <input type="text" id="post-title" class="form-control" placeholder="Заголовок поста">
+                <textarea id="post-content" class="form-control mt-2" placeholder="Содержание поста"></textarea>
+                <button class="btn btn-success mt-2" onclick="createPost()">Создать пост</button>
+            </div>
+        </div>
+        <div id="chats" class="content-section">
+            <h2>Чаты</h2>
+            <div id="conversations-list"></div>
+            <button class="btn btn-primary" onclick="loadConversations()">Обновить беседы</button>
+        </div>
+        <div id="login" class="content-section">
+            <h2>Вход</h2>
+            <input type="text" id="login-username" class="form-control" placeholder="Имя пользователя">
+            <input type="password" id="login-password" class="form-control mt-2" placeholder="Пароль">
+            <button class="btn btn-primary mt-2" onclick="handleLogin()">Войти</button>
+        </div>
+        <div id="register" class="content-section">
+            <h2>Регистрация</h2>
+            <input type="text" id="reg-username" class="form-control" placeholder="Имя пользователя">
+            <input type="email" id="reg-email" class="form-control mt-2" placeholder="Email">
+            <input type="text" id="reg-fullname" class="form-control mt-2" placeholder="Полное имя">
+            <input type="password" id="reg-password" class="form-control mt-2" placeholder="Пароль">
+            <button class="btn btn-primary mt-2" onclick="handleRegister()">Зарегистрироваться</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 VKurseDerma</p>
+    </footer>
+    <script>
+        const API_URL = 'http://localhost:8000/api/v1';
 
-  <!-- Вкладка регистрации -->
-  <div id="register-tab" class="tab">
-    <h2>📝 Регистрация</h2>
-    <form id="register-form">
-      <input type="text" id="reg-username" placeholder="Логин" required>
-      <input type="email" id="reg-email" placeholder="Email" required>
-      <input type="password" id="reg-password" placeholder="Пароль" required>
-      <button type="submit">Зарегистрироваться</button>
-    </form>
-    <button id="show-login">Назад к входу</button>
-  </div>
-
-  <!-- Основное приложение -->
-  <div id="app-tab" class="tab">
-    <button id="logout-btn">Выйти</button>
-    <nav>
-      <button onclick="showAppTab('profile-tab')">👤 Профиль</button>
-      <button onclick="showAppTab('users-tab')">👥 Пользователи</button>
-      <button onclick="showAppTab('friends-tab')">🤝 Друзья</button>
-    </nav>
-
-    <!-- Вкладка профиля -->
-    <div id="profile-tab" class="app-tab">
-      <h2>Мой профиль</h2>
-      <div id="profile-view"></div>
-      <form id="profile-edit-form" style="display: none;">
-        <input type="text" id="edit-full-name" placeholder="Полное имя">
-        <textarea id="edit-bio" placeholder="О себе"></textarea>
-        <input type="text" id="edit-avatar" placeholder="URL аватара">
-        <button type="submit">Сохранить</button>
-      </form>
-      <button id="edit-profile-btn">Редактировать</button>
-    </div>
-
-    <!-- Вкладка пользователей -->
-    <div id="users-tab" class="app-tab active">
-      <h2>👥 Все пользователи</h2>
-      <form id="search-form">
-        <input type="text" id="search-input" placeholder="Поиск по логину...">
-        <button type="submit">🔍 Искать</button>
-        <button type="button" id="reset-button">🔄 Сбросить</button>
-      </form>
-      <ul id="users-list"></ul>
-    </div>
-
-    <!-- Вкладка друзей -->
-    <div id="friends-tab" class="app-tab">
-      <h2>🤝 Мои друзья</h2>
-      <h3>Друзья</h3>
-      <ul id="friends-list"></ul>
-      <h3>Заявки в друзья</h3>
-      <ul id="requests-list"></ul>
-    </div>
-  </div>
-
-  <script>
-    const API_BASE = "http://localhost:8000/api/v1";
-    let token = localStorage.getItem('token');
-    let currentUser = null;
-
-    // Функции управления вкладками
-    function showTab(tabId) {
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-    }
-
-    function showAppTab(tabId) {
-      document.querySelectorAll('.app-tab').forEach(tab => tab.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-    }
-
-    // Авторизация
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('login-username').value;
-      const password = document.getElementById('login-password').value;
-
-      try {
-        const response = await fetch(`${API_BASE}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
-        });
-
-        if (!response.ok) throw new Error('Ошибка входа');
-
-        const data = await response.json();
-        token = data.access_token;
-        localStorage.setItem('token', token);
-        currentUser = { id: data.user_id, username: data.username };
-
-        showTab('app-tab');
-        showAppTab('users-tab');
-        fetchUsers();
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
-    // Регистрация
-    document.getElementById('register-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const user = {
-        username: document.getElementById('reg-username').value,
-        email: document.getElementById('reg-email').value,
-        password: document.getElementById('reg-password').value
-      };
-
-      try {
-        const response = await fetch(`${API_BASE}/auth/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(user)
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Ошибка регистрации');
+        // Показать секцию
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
         }
 
-        alert('Регистрация успешна! Теперь войдите.');
-        showTab('auth-tab');
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
-    // Загрузка пользователей
-    async function fetchUsers(query = '') {
-      try {
-        const url = query
-          ? `${API_BASE}/users/search?query=${encodeURIComponent(query)}`
-          : `${API_BASE}/users/`;
-
-        const response = await fetch(url, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!response.ok) throw new Error('Ошибка загрузки пользователей');
-        const users = await response.json();
-
-        const list = document.getElementById('users-list');
-        list.innerHTML = '';
-
-        if (users.length === 0) {
-          list.innerHTML = '<li>Пользователи не найдены</li>';
-          return;
+        // Универсальная функция для запросов к API
+        async function fetchData(endpoint, method = 'GET', body = null, token = null) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            const options = { method, headers };
+            if (body) options.body = JSON.stringify(body);
+            const response = await fetch(`${API_URL}${endpoint}`, options);
+            if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
+            return response.json();
         }
 
-        users.forEach(user => {
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <strong>${user.username}</strong> (${user.email})
-            <button onclick="sendFriendRequest(${user.id})">➕ Добавить в друзья</button>
-          `;
-          list.appendChild(li);
-        });
-      } catch (error) {
-        console.error('Ошибка загрузки пользователей:', error);
-        document.getElementById('users-list').innerHTML = `<li>Ошибка: ${error.message}</li>`;
-      }
-    }
-
-    // Поиск пользователей
-    document.getElementById('search-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const query = document.getElementById('search-input').value;
-      fetchUsers(query);
-    });
-
-    // Сброс поиска
-    document.getElementById('reset-button').addEventListener('click', () => {
-      document.getElementById('search-input').value = '';
-      fetchUsers();
-    });
-
-    // Отправка заявки в друзья
-    window.sendFriendRequest = async (friendId) => {
-      try {
-        const response = await fetch(`${API_BASE}/friends/request`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ friend_id: friendId })
-        });
-
-        if (!response.ok) throw new Error('Ошибка отправки заявки');
-        alert('Заявка отправлена!');
-        loadFriends();
-      } catch (error) {
-        alert(error.message);
-      }
-    };
-
-    // Загрузка профиля
-    async function loadProfile() {
-      try {
-        const response = await fetch(`${API_BASE}/profile/`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!response.ok) throw new Error('Ошибка загрузки профиля');
-        const profile = await response.json();
-
-        document.getElementById('profile-view').innerHTML = `
-          <p><strong>Имя:</strong> ${profile.full_name || 'Не указано'}</p>
-          <p><strong>О себе:</strong> ${profile.bio || 'Не указано'}</p>
-          ${profile.avatar_url ? `<img src="${profile.avatar_url}" width="100">` : ''}
-        `;
-
-        // Заполнение формы редактирования
-        document.getElementById('edit-full-name').value = profile.full_name || '';
-        document.getElementById('edit-bio').value = profile.bio || '';
-        document.getElementById('edit-avatar').value = profile.avatar_url || '';
-      } catch (error) {
-        console.error('Ошибка загрузки профиля:', error);
-        document.getElementById('profile-view').innerHTML = `<p>Ошибка: ${error.message}</p>`;
-      }
-    }
-
-    // Редактирование профиля
-    document.getElementById('edit-profile-btn').addEventListener('click', () => {
-      document.getElementById('profile-view').style.display = 'none';
-      document.getElementById('profile-edit-form').style.display = 'block';
-    });
-
-    document.getElementById('profile-edit-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const profileData = {
-        full_name: document.getElementById('edit-full-name').value,
-        bio: document.getElementById('edit-bio').value,
-        avatar_url: document.getElementById('edit-avatar').value
-      };
-
-      try {
-        const response = await fetch(`${API_BASE}/profile/`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(profileData)
-        });
-
-        if (!response.ok) throw new Error('Ошибка сохранения');
-
-        document.getElementById('profile-view').style.display = 'block';
-        document.getElementById('profile-edit-form').style.display = 'none';
-        loadProfile();
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
-    // Загрузка друзей
-    async function loadFriends() {
-      try {
-        const response = await fetch(`${API_BASE}/friends/me`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!response.ok) throw new Error('Ошибка загрузки друзей');
-        const data = await response.json();
-
-        // Список друзей
-        const friendsList = document.getElementById('friends-list');
-        friendsList.innerHTML = '';
-
-        if (data.friends.length === 0) {
-          friendsList.innerHTML = '<li>У вас пока нет друзей</li>';
-        } else {
-          data.friends.forEach(friend => {
-            const li = document.createElement('li');
-            li.textContent = friend.username;
-            friendsList.appendChild(li);
-          });
+        // Регистрация
+        async function handleRegister() {
+            const userData = {
+                username: document.getElementById('reg-username').value,
+                email: document.getElementById('reg-email').value,
+                full_name: document.getElementById('reg-fullname').value,
+                password: document.getElementById('reg-password').value
+            };
+            try {
+                await fetchData('/auth/register', 'POST', userData);
+                alert('Регистрация успешна! Теперь войдите.');
+                showSection('login');
+            } catch (error) {
+                alert('Ошибка регистрации: ' + error.message);
+            }
         }
 
-        // Входящие заявки
-        const requestsList = document.getElementById('requests-list');
-        requestsList.innerHTML = '';
-
-        if (data.pending_requests.length === 0) {
-          requestsList.innerHTML = '<li>Нет входящих заявок</li>';
-        } else {
-          data.pending_requests.forEach(request => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-              ${request.username}
-              <button onclick="acceptFriendRequest(${request.id})">✅ Принять</button>
-            `;
-            requestsList.appendChild(li);
-          });
+        // Вход
+        async function handleLogin() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('password', password);
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+                if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
+                const data = await response.json();
+                localStorage.setItem('token', data.access_token);
+                alert('Вход успешен!');
+                showSection('profile');
+                loadProfile();
+            } catch (error) {
+                alert('Ошибка входа: ' + error.message);
+            }
         }
-      } catch (error) {
-        console.error('Ошибка загрузки друзей:', error);
-      }
-    }
 
-    // Принятие заявки в друзья
-    window.acceptFriendRequest = async (friendId) => {
-      try {
-        // Найдем ID заявки
-        const response = await fetch(`${API_BASE}/friends/status/${friendId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        // Загрузка профиля
+        async function loadProfile() {
+            const token = localStorage.getItem('token');
+            try {
+                const profile = await fetchData('/profile/', 'GET', null, token);
+                document.getElementById('profile-info').innerHTML = `
+                    <p><strong>Полное имя:</strong> ${profile.full_name || 'Не указано'}</p>
+                    <p><strong>Биография:</strong> ${profile.bio || 'Не указано'}</p>
+                    <p><strong>Аватар:</strong> <img src="${profile.avatar_url || ''}" alt="Аватар" width="100"></p>
+                `;
+            } catch (error) {
+                alert('Ошибка загрузки профиля: ' + error.message);
+            }
+        }
+
+        // Загрузка списка друзей
+        async function loadFriends() {
+            const token = localStorage.getItem('token');
+            try {
+                const data = await fetchData('/friends/me', 'GET', null, token);
+                const friendsList = data.friends.map(friend => `<li>${friend.username}</li>`).join('');
+                document.getElementById('friends-list').innerHTML = `<ul>${friendsList}</ul>`;
+            } catch (error) {
+                alert('Ошибка загрузки друзей: ' + error.message);
+            }
+        }
+
+        // Поиск пользователей
+        async function searchUsers() {
+            const token = localStorage.getItem('token');
+            const query = document.getElementById('user-search').value;
+            try {
+                const users = await fetchData(`/users/search?query=${query}`, 'GET', null, token);
+                const usersList = users.map(user => `<li>${user.username} (${user.email})</li>`).join('');
+                document.getElementById('users-list').innerHTML = `<ul>${usersList}</ul>`;
+            } catch (error) {
+                alert('Ошибка поиска пользователей: ' + error.message);
+            }
+        }
+
+        // Создание поста
+        async function createPost() {
+            const token = localStorage.getItem('token');
+            const postData = {
+                title: document.getElementById('post-title').value,
+                content: document.getElementById('post-content').value
+            };
+            try {
+                await fetchData('/posts/', 'POST', postData, token);
+                alert('Пост создан!');
+                loadPosts();
+            } catch (error) {
+                alert('Ошибка создания поста: ' + error.message);
+            }
+        }
+
+        // Загрузка постов
+        async function loadPosts() {
+            const token = localStorage.getItem('token');
+            try {
+                const posts = await fetchData('/posts/me', 'GET', null, token);
+                const postsList = posts.map(post => `
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">${post.title}</h5>
+                            <p class="card-text">${post.content}</p>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('posts-list').innerHTML = postsList;
+            } catch (error) {
+                alert('Ошибка загрузки постов: ' + error.message);
+            }
+        }
+
+        // Загрузка бесед
+        async function loadConversations() {
+            const token = localStorage.getItem('token');
+            try {
+                const conversations = await fetchData('/chats/conversations/', 'GET', null, token);
+                const convList = conversations.map(conv => `
+                    <li>Беседа #${conv.id} (Участники: ${conv.participants.join(', ')})</li>
+                `).join('');
+                document.getElementById('conversations-list').innerHTML = `<ul>${convList}</ul>`;
+            } catch (error) {
+                alert('Ошибка загрузки бесед: ' + error.message);
+            }
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('home');
         });
-
-        if (!response.ok) throw new Error('Ошибка поиска заявки');
-        const friendship = await response.json();
-
-        // Примем заявку
-        const updateResponse = await fetch(`${API_BASE}/friends/${friendship.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ status: 'accepted' })
-        });
-
-        if (!updateResponse.ok) throw new Error('Ошибка принятия заявки');
-        alert('Заявка принята!');
-        loadFriends();
-      } catch (error) {
-        alert(error.message);
-      }
-    };
-
-    // Выход
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      localStorage.removeItem('token');
-      token = null;
-      currentUser = null;
-      showTab('auth-tab');
-    });
-
-    // Переключение между вкладками
-    document.getElementById('show-register').addEventListener('click', () => showTab('register-tab'));
-    document.getElementById('show-login').addEventListener('click', () => showTab('auth-tab'));
-
-    // Инициализация при загрузке
-    if (token) {
-      showTab('app-tab');
-      showAppTab('users-tab');
-      fetchUsers();
-    } else {
-      showTab('auth-tab');
-    }
-  </script>
+    </script>
 </body>
 </html>
